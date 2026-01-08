@@ -7,10 +7,21 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Enable CORS
+  const allowedOrigins = process.env.CORS_ORIGINS?.split(',');
+
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
-    credentials: true,
+    origin: (origin, callback) => {
+      // Permitir requests sin origin (Postman, SSR, cron)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins?.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`CORS bloqueado para: ${origin}`), false);
+    },
   });
+
 
   // Global prefix for all routes
   app.setGlobalPrefix('api');
