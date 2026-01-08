@@ -1,0 +1,57 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateExperienceDto, UpdateExperienceDto } from './dto/experience.dto';
+
+@Injectable()
+export class ExperienceService {
+  constructor(private prisma: PrismaService) {}
+
+  async create(createExperienceDto: CreateExperienceDto) {
+    return this.prisma.experience.create({
+      data: {
+        ...createExperienceDto,
+        startDate: new Date(createExperienceDto.startDate),
+        endDate: createExperienceDto.endDate ? new Date(createExperienceDto.endDate) : null,
+      },
+    });
+  }
+
+  async findAll() {
+    return this.prisma.experience.findMany({
+      orderBy: { order: 'desc' },
+    });
+  }
+
+  async findOne(id: string) {
+    const experience = await this.prisma.experience.findUnique({
+      where: { id },
+    });
+
+    if (!experience) {
+      throw new NotFoundException(`Experience with ID ${id} not found`);
+    }
+
+    return experience;
+  }
+
+  async update(id: string, updateExperienceDto: UpdateExperienceDto) {
+    await this.findOne(id); // Check if exists
+
+    return this.prisma.experience.update({
+      where: { id },
+      data: {
+        ...updateExperienceDto,
+        startDate: updateExperienceDto.startDate ? new Date(updateExperienceDto.startDate) : undefined,
+        endDate: updateExperienceDto.endDate ? new Date(updateExperienceDto.endDate) : undefined,
+      },
+    });
+  }
+
+  async remove(id: string) {
+    await this.findOne(id); // Check if exists
+
+    return this.prisma.experience.delete({
+      where: { id },
+    });
+  }
+}

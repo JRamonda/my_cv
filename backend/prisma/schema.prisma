@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Profile {
+  id           String   @id @default(uuid())
+  name         String
+  title        String
+  bio          String
+  location     String
+  email        String
+  phone        String?
+  linkedin     String?
+  github       String?
+  website      String?
+  profileImage String?
+  resumeFile   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("profiles")
+}
+
+model Experience {
+  id           String    @id @default(uuid())
+  company      String
+  position     String
+  startDate    DateTime
+  endDate      DateTime?
+  current      Boolean   @default(false)
+  description  String
+  achievements String[]  @default([])
+  challenges   String[]  @default([])
+  learnings    String[]  @default([])
+  technologies String[]  @default([])
+  order        Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("experiences")
+}
+
+model Project {
+  id           String   @id @default(uuid())
+  title        String
+  description  String
+  longDesc     String?
+  images       String[] @default([])
+  demoUrl      String?
+  repoUrl      String?
+  technologies String[] @default([])
+  highlights   String[] @default([])
+  category     String   @default("web")
+  featured     Boolean  @default(false)
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("projects")
+}
+
+model Skill {
+  id        String   @id @default(uuid())
+  category  String
+  name      String
+  level     String   @default("intermediate")
+  icon      String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("skills")
+}
+
+model TechStack {
+  id        String   @id @default(uuid())
+  category  String
+  name      String
+  icon      String?
+  preferred Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("tech_stack")
+}
+
+model Reference {
+  id           String   @id @default(uuid())
+  name         String
+  position     String
+  company      String
+  relationship String
+  testimonial  String
+  email        String?
+  phone        String?
+  linkedin     String?
+  avatar       String?
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("references")
+}
